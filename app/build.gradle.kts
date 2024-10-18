@@ -2,6 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    kotlin("plugin.serialization")
+    id("com.google.devtools.ksp")
+    id("androidx.room")
 }
 
 android {
@@ -37,9 +40,39 @@ android {
     buildFeatures {
         compose = true
     }
+    packaging {
+        resources.excludes += "DebugProbesKt.bin"
+    }
+    room {
+        schemaDirectory("$projectDir/schemas")
+    }
 }
 
 dependencies {
+
+    val ktorVersion = "3.0.0"
+    val coroutinesVersion = "1.9.0"
+    val serializationJsonVersion = "1.7.3"
+    implementation("io.ktor:ktor-client-android:$ktorVersion")
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-serialization-jvm:$ktorVersion")
+    implementation("io.ktor:ktor-client-logging:$ktorVersion")
+    implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationJsonVersion")
+
+    val coilComposeVersion = "3.0.0-rc01"
+    implementation("io.coil-kt.coil3:coil-compose:$coilComposeVersion")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:$coilComposeVersion")
+
+    val roomVersion = "2.6.1"
+    implementation("androidx.room:room-runtime:$roomVersion")
+    implementation("androidx.room:room-ktx:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

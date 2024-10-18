@@ -1,11 +1,11 @@
-package pl.rejfi.solvrorekruapp.data.models
+package pl.rejfi.solvrorekruapp.data.models.domain
 
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Meta(
+data class MetaDomain(
     @SerialName("currentPage")
     val currentPage: Int,
     @SerialName("firstPage")
@@ -21,7 +21,7 @@ data class Meta(
     @SerialName("perPage")
     val perPage: Int,
     @SerialName("previousPageUrl")
-    val previousPageUrl: Any?,
+    val previousPageUrl: String?,
     @SerialName("total")
     val total: Int
 )

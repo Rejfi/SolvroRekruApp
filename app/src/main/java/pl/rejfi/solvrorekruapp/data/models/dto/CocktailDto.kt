@@ -1,11 +1,11 @@
-package pl.rejfi.solvrorekruapp.data.models
+package pl.rejfi.solvrorekruapp.data.models.dto
 
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Data(
+data class CocktailDto(
     @SerialName("alcoholic")
     val alcoholic: Boolean,
     @SerialName("category")
