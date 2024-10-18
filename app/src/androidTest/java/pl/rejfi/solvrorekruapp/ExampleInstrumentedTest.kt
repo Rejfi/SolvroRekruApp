@@ -1,24 +1,34 @@
 package pl.rejfi.solvrorekruapp
 
-import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
-
+import kotlinx.coroutines.runBlocking
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
+import pl.rejfi.solvrorekruapp.data.network.CocktailNetworkManager
 
-import org.junit.Assert.*
-
-/**
- * Instrumented test, which will execute on an Android device.
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
 @RunWith(AndroidJUnit4::class)
-class ExampleInstrumentedTest {
+class CocktailApiTest {
+
+    private val client = CocktailNetworkManager()
+
     @Test
-    fun useAppContext() {
-        // Context of the app under test.
-        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("pl.rejfi.solvrorekruapp", appContext.packageName)
+    fun getAllCocktails() = runBlocking {
+        val response = client.getAllCocktails()
+        assertEquals(true, response.isSuccess)
+        val data = response.getOrThrow()
+        assertEquals(true, data.cocktails.isNotEmpty())
+    }
+
+    @Test
+    fun getSingleCocktail() = runBlocking {
+        val response = client.getAllCocktails()
+        assertEquals(true, response.isSuccess)
+        val data = response.getOrThrow().cocktails.first()
+        val singleCocktailResponse = client.getCocktail(data.id)
+        assertEquals(true, singleCocktailResponse.isSuccess)
+        val cocktail = singleCocktailResponse.getOrThrow()
+        val id = cocktail.details.id
+        assertEquals(data.id, id)
     }
 }

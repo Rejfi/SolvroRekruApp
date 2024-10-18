@@ -51,8 +51,6 @@ android {
 dependencies {
 
     val ktorVersion = "3.0.0"
-    val coroutinesVersion = "1.9.0"
-    val serializationJsonVersion = "1.7.3"
     implementation("io.ktor:ktor-client-android:$ktorVersion")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-serialization-jvm:$ktorVersion")
@@ -60,8 +58,10 @@ dependencies {
     implementation("io.ktor:ktor-client-okhttp:$ktorVersion")
     implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktorVersion")
-
+    val coroutinesVersion = "1.9.0"
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutinesVersion")
+
+    val serializationJsonVersion = "1.7.3"
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:$serializationJsonVersion")
 
     val coilComposeVersion = "3.0.0-rc01"
@@ -73,6 +73,8 @@ dependencies {
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
 
+    val navVersion = "2.8.3"
+    implementation("androidx.navigation:navigation-compose:$navVersion")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

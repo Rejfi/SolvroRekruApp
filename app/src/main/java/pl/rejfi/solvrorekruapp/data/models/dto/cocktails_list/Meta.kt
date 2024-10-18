@@ -1,11 +1,11 @@
-package pl.rejfi.solvrorekruapp.data.models.domain
+package pl.rejfi.solvrorekruapp.data.models.dto.cocktails_list
 
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class MetaDomain(
+data class Meta(
     @SerialName("currentPage")
     val currentPage: Int,
     @SerialName("firstPage")

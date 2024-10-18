@@ -1,11 +1,11 @@
-package pl.rejfi.solvrorekruapp.data.models.dto
+package pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail
 
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CocktailDto(
+data class Details(
     @SerialName("alcoholic")
     val alcoholic: Boolean,
     @SerialName("category")
@@ -18,6 +18,8 @@ data class CocktailDto(
     val id: Int,
     @SerialName("imageUrl")
     val imageUrl: String,
+    @SerialName("ingredients")
+    val ingredients: List<Ingredient>,
     @SerialName("instructions")
     val instructions: String,
     @SerialName("name")
