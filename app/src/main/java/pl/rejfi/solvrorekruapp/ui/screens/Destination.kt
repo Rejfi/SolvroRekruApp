@@ -9,4 +9,7 @@ sealed interface Destination {
 
     @Serializable
     data class DetailScreen(val id: Int) : Destination
+
+    @Serializable
+    data object SearchScreen : Destination
 }

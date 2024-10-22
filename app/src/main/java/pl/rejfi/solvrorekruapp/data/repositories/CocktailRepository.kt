@@ -3,13 +3,14 @@ package pl.rejfi.solvrorekruapp.data.repositories
 import android.app.Application
 import android.util.Log
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import pl.rejfi.solvrorekruapp.data.local.CocktailLocalDatabase
 import pl.rejfi.solvrorekruapp.data.models.dto.cocktails_list.Cocktail
-import pl.rejfi.solvrorekruapp.data.models.dto.cocktails_list.Cocktails
 import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.CocktailDetails
 import pl.rejfi.solvrorekruapp.data.network.CocktailNetworkManager
+import pl.rejfi.solvrorekruapp.data.network.SearchValue
 import kotlin.math.abs
 
 class CocktailRepository(app: Application) {
@@ -21,44 +22,36 @@ class CocktailRepository(app: Application) {
 
     private var lastNetworkUpdate = Long.MIN_VALUE
 
-    suspend fun getAllCocktails(): Result<Cocktails> {
-        return cocktailApi.getAllCocktails()
+
+    private val cocktailNetworkLoader = CocktailsNetworkLoader(cocktailApi)
+    private val cocktailNetworkSearcher = CocktailsNetworkSearcher(cocktailApi)
+
+    fun getCocktails(): StateFlow<List<Cocktail>> {
+        return cocktailNetworkLoader.cocktails
     }
 
-    fun searchCocktail(contains: String): Flow<List<Cocktail>> = flow {
-        val cachedCocktails = cocktailDao.searchCocktails(contains).firstOrNull() ?: emptyList()
-        emit(cachedCocktails)
+    fun getFoundCocktails(): StateFlow<List<Cocktail>> {
+        return cocktailNetworkSearcher.cocktails
     }
 
-    fun getCocktails(): Flow<List<Cocktail>> = flow {
-        val cachedCocktails = cocktailDao.getAllCocktails().firstOrNull()
-
-        // Local
-        if (cachedCocktails?.isNotEmpty() == true) {
-            Log.d(REPO_TAG, "Local cache: ${cachedCocktails.toList().toString()}")
-            emit(cachedCocktails)
-        }
-
-        debounce {
-
-            val cocktailList = getCocktailsFromNetwork()
-
-            if (cocktailList.isEmpty()) return@flow
-
-            // Update cache
-            cocktailDao.insertCocktail(cocktailList)
-
-            Log.d(REPO_TAG, "Network response: ${cocktailList.toList().toString()}")
-            emit(cocktailList)
-        }
+    fun clearFoundCocktails(){
+        cocktailNetworkSearcher.clearResult()
     }
 
-    suspend fun getCocktail(id: Int): Result<CocktailDetails> {
+    suspend fun loadNextSearchCocktails(searchValue: SearchValue) {
+        cocktailNetworkSearcher.loadNext(searchValue)
+    }
+
+    suspend fun loadNextCocktails(searchValue: SearchValue) {
+        cocktailNetworkLoader.loadNext(searchValue)
+    }
+
+    suspend fun getCocktailById(id: Int): Result<CocktailDetails> {
         return cocktailApi.getCocktail(id)
     }
 
     private inline fun debounce(
-        minimumInterval: Long = 60_000L,
+        minimumInterval: Long = 200L,
         execute: () -> Unit
     ) {
         val currentTime = System.currentTimeMillis()
@@ -71,16 +64,4 @@ class CocktailRepository(app: Application) {
         lastNetworkUpdate = System.currentTimeMillis()
         Log.d(REPO_TAG, "Not debounce")
     }
-
-    private suspend fun getCocktailsFromNetwork(): List<Cocktail> {
-        val cocktailsApiResult = cocktailApi.getAllCocktails()
-
-        if (cocktailsApiResult.isFailure) return emptyList()
-
-        val cocktails = cocktailsApiResult.getOrNull() ?: return emptyList()
-
-        val cocktailList = cocktails.cocktails
-        return cocktailList
-    }
-
 }

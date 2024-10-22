@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Cocktails(
     @SerialName("data")
-    val cocktails: List<Cocktail>,
+    val cocktails: List<Cocktail> = emptyList(),
     @SerialName("meta")
-    val meta: Meta?
+    val meta: Meta? = null
 )

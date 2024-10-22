@@ -7,21 +7,21 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Meta(
     @SerialName("currentPage")
-    val currentPage: Int,
+    val currentPage: Int?,
     @SerialName("firstPage")
-    val firstPage: Int,
+    val firstPage: Int?,
     @SerialName("firstPageUrl")
-    val firstPageUrl: String,
+    val firstPageUrl: String?,
     @SerialName("lastPage")
-    val lastPage: Int,
+    val lastPage: Int?,
     @SerialName("lastPageUrl")
-    val lastPageUrl: String,
+    val lastPageUrl: String?,
     @SerialName("nextPageUrl")
-    val nextPageUrl: String,
+    val nextPageUrl: String?,
     @SerialName("perPage")
-    val perPage: Int,
+    val perPage: Int?,
     @SerialName("previousPageUrl")
     val previousPageUrl: String?,
     @SerialName("total")
-    val total: Int
+    val total: Int?
 )

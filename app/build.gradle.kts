@@ -76,6 +76,11 @@ dependencies {
     val navVersion = "2.8.3"
     implementation("androidx.navigation:navigation-compose:$navVersion")
 
+    val pagingVersion = "3.3.2"
+
+    implementation("androidx.paging:paging-runtime:$pagingVersion")
+    implementation("androidx.paging:paging-compose:$pagingVersion")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

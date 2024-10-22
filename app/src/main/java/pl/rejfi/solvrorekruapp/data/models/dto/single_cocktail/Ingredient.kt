@@ -17,7 +17,7 @@ data class Ingredient(
     @SerialName("imageUrl")
     val imageUrl: String?,
     @SerialName("measure")
-    val measure: String,
+    val measure: String = "",
     @SerialName("name")
     val name: String,
     @SerialName("percentage")

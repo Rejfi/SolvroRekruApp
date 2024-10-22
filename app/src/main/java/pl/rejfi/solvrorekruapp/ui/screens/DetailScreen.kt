@@ -79,14 +79,17 @@ fun DetailScreen(
     Scaffold(
         modifier = modifier
             .fillMaxSize()
-    ) {
-        CocktailDetailsScreen(cocktail)
+    ) { innerPadding ->
+        CocktailDetailsScreen(cocktail = cocktail, modifier = modifier.padding(innerPadding))
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CocktailDetailsScreen(cocktail: CocktailDetails) {
+fun CocktailDetailsScreen(
+    cocktail: CocktailDetails,
+    modifier: Modifier = Modifier
+) {
     val scroll = rememberScrollState()
     Scaffold(
         topBar = {

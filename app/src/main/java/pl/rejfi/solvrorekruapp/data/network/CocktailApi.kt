@@ -14,10 +14,21 @@ import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import pl.rejfi.solvrorekruapp.data.models.dto.cocktails_list.Cocktails
 import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.CocktailDetails
+import pl.rejfi.solvrorekruapp.ui.screens.Destination
+
+sealed interface SearchValue {
+    data object None : SearchValue
+    data class Text(val text: String) : SearchValue
+}
 
 interface CocktailApi {
-    suspend fun getAllCocktails(): Result<Cocktails>
+    suspend fun getAllCocktails(
+        page: Int = 1,
+        name: String? = null
+    ): Result<Cocktails>
+
     suspend fun getCocktail(id: Int): Result<CocktailDetails>
+    suspend fun searchCocktails(searchValue: String): Result<Cocktails>
     // suspend fun getCocktailsGlasses()
     // suspend fun getCocktailsCategories()
 }
@@ -44,8 +55,14 @@ class CocktailNetworkManager : CocktailApi {
         }
     }
 
-    override suspend fun getAllCocktails() = runCatching {
-        client.get("$baseUrl/cocktails")
+    override suspend fun getAllCocktails(page: Int, name: String?) = runCatching {
+        val request = StringBuilder("$baseUrl/cocktails")
+            .append("?page=$page")
+            .apply {
+                if (name != null) append("&name=$name")
+            }
+            .toString()
+        client.get(request)
             .body<Cocktails>()
     }.onFailure {
         Log.d("TAG", "${it.message}, ${it.stackTraceToString()}")
@@ -54,6 +71,13 @@ class CocktailNetworkManager : CocktailApi {
     override suspend fun getCocktail(id: Int) = runCatching {
         client.get("$baseUrl/cocktails/${id}")
             .body<CocktailDetails>()
+    }.onFailure {
+        Log.d("TAG", "${it.message}, ${it.stackTraceToString()}")
+    }
+
+    override suspend fun searchCocktails(searchValue: String) = runCatching {
+        client.get("$baseUrl/cocktails/?name=${searchValue}")
+            .body<Cocktails>()
     }.onFailure {
         Log.d("TAG", "${it.message}, ${it.stackTraceToString()}")
     }
