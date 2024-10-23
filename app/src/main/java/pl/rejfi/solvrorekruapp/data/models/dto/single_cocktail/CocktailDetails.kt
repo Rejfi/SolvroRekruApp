@@ -7,5 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CocktailDetails(
     @SerialName("data")
-    val details: Details
+    val details: Details,
+    @SerialName("favourite")
+    val favourite: Boolean = false
 )

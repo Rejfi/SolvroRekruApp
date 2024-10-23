@@ -18,6 +18,28 @@ class CocktailsNetworkLoader(private val api: CocktailApi) {
     private val _cocktails = MutableStateFlow<List<Cocktail>>(emptyList())
     val cocktails = _cocktails.asStateFlow()
 
+    private var init = false
+
+    suspend fun loadCocktailsFirstPage() {
+        if (init) return
+
+        init = true
+        currentPage = 1
+        val nextPage = (currentPage).coerceIn(0, lastPage)
+
+        val response = api.getAllCocktails(page = nextPage)
+        val data = response.getOrNull() ?: return
+
+        val meta = data.meta ?: return
+        val cocktails = data.cocktails
+        lastPage = meta.lastPage ?: 1
+
+        if (cocktails.isEmpty()) return
+
+        _cocktails.getAndUpdate { it + cocktails }
+        Log.d("TAG", "Next page: $nextPage")
+    }
+
     suspend fun loadNext(searchValue: SearchValue = SearchValue.None) {
         if (end) return
 

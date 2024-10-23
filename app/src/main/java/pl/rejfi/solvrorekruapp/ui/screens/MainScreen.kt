@@ -53,16 +53,12 @@ fun MainScreenRoot(
 ) {
 
     LaunchedEffect(Unit) {
-        viewModel.loadMoreCocktails()
-    }
-
-    var isSearching by remember {
-        mutableStateOf(false)
+        viewModel.loadCocktailsFirstPage()
     }
 
     val cocktails by viewModel.cocktails.collectAsStateWithLifecycle()
 
-    MainContent(
+    MainScreen(
         modifier = modifier,
         cocktails = cocktails,
         onCocktailClick = onCocktailClick,
@@ -72,7 +68,7 @@ fun MainScreenRoot(
 }
 
 @Composable
-fun MainContent(
+fun MainScreen(
     cocktails: List<Cocktail>,
     modifier: Modifier = Modifier,
     onCocktailClick: (Int) -> Unit = {},
@@ -114,7 +110,7 @@ fun CocktailList(
         itemsIndexed(cocktails) { index, cocktail ->
             CocktailItem(cocktail = cocktail, onClick = onCocktailClicked)
 
-            if (index >= cocktails.size - 3) {
+            if (index >= cocktails.size - 3 && cocktails.size > 10) {
                 onLoadMoreCocktails()
             }
         }

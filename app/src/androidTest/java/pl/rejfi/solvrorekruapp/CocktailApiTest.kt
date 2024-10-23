@@ -28,7 +28,7 @@ class CocktailApiTest {
         assertEquals(true, data.cocktails.isNotEmpty())
         val lastPage = data.meta?.lastPage ?: 1
 
-        for (page in 2..lastPage){
+        for (page in 2..lastPage) {
             val res = client.getAllCocktails(page)
             assertEquals(true, res.isSuccess)
             val dat = res.getOrThrow()
@@ -56,7 +56,23 @@ class CocktailApiTest {
         assertEquals(true, data.cocktails.isNotEmpty())
         val lastPage = data.meta?.lastPage ?: 1
 
-        for (page in 2..lastPage){
+        for (page in 2..lastPage) {
+            val res = client.getAllCocktails(page)
+            assertEquals(true, res.isSuccess)
+            val dat = res.getOrThrow()
+            assertEquals(true, dat.cocktails.isNotEmpty())
+        }
+    }
+
+    @Test
+    fun getFavCocktails() = runBlocking {
+        val response = client.getCocktailsByIds(1, listOf(11000, 11001, 11002))
+        assertEquals(true, response.isSuccess)
+        val data = response.getOrThrow()
+        assertEquals(true, data.cocktails.isNotEmpty())
+        val lastPage = data.meta?.lastPage ?: 1
+
+        for (page in 2..lastPage) {
             val res = client.getAllCocktails(page)
             assertEquals(true, res.isSuccess)
             val dat = res.getOrThrow()

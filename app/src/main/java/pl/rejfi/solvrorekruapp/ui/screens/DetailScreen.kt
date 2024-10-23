@@ -3,6 +3,7 @@ package pl.rejfi.solvrorekruapp.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,10 +22,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -33,7 +38,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,8 +60,10 @@ import pl.rejfi.solvrorekruapp.viewmodels.MainViewModel
 
 @Composable
 fun DetailScreenRoot(
-    viewModel: MainViewModel, cocktailId: Int,
-    modifier: Modifier = Modifier
+    viewModel: MainViewModel,
+    cocktailId: Int,
+    modifier: Modifier = Modifier,
+    onFavouriteClick: (Boolean, Int) -> Unit = { _, _ -> }
 ) {
     LaunchedEffect(Unit) {
         viewModel.selectCocktail(cocktailId)
@@ -64,7 +76,11 @@ fun DetailScreenRoot(
             CircularProgressIndicator()
         }
     } else {
-        DetailScreen(selectedCocktail!!)
+        DetailScreen(
+            cocktail = selectedCocktail!!,
+            modifier = modifier,
+            onFavouriteClick = onFavouriteClick
+        )
     }
     DisposableEffect(Unit) {
         onDispose { viewModel.selectCocktail(null) }
@@ -74,13 +90,19 @@ fun DetailScreenRoot(
 @Composable
 fun DetailScreen(
     cocktail: CocktailDetails,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onFavouriteClick: (Boolean, Int) -> Unit = { _, _ -> }
 ) {
     Scaffold(
         modifier = modifier
             .fillMaxSize()
     ) { innerPadding ->
-        CocktailDetailsScreen(cocktail = cocktail, modifier = modifier.padding(innerPadding))
+        CocktailDetailsScreen(
+            cocktail = cocktail,
+            modifier = modifier.padding(innerPadding),
+            isFavourite = cocktail.favourite,
+            onFavouriteClick = onFavouriteClick
+        )
     }
 }
 
@@ -88,13 +110,37 @@ fun DetailScreen(
 @Composable
 fun CocktailDetailsScreen(
     cocktail: CocktailDetails,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isFavourite: Boolean = false,
+    onFavouriteClick: (Boolean, Int) -> Unit
 ) {
     val scroll = rememberScrollState()
+
+    var isCurrentFavourite by remember {
+        mutableStateOf(isFavourite)
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(cocktail.details.name) },
+                title = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(cocktail.details.name)
+                        IconButton(
+                            onClick = {
+                                isCurrentFavourite = !isCurrentFavourite
+                                onFavouriteClick(isCurrentFavourite, cocktail.details.id)
+                            }) {
+                            val icon =
+                                if (isCurrentFavourite) Icons.Default.Favorite
+                                else Icons.Default.FavoriteBorder
+                            Icon(icon, "")
+                        }
+                    }
+                },
             )
         }
     ) { padding ->

@@ -12,4 +12,7 @@ sealed interface Destination {
 
     @Serializable
     data object SearchScreen : Destination
+
+    @Serializable
+    data object FavouriteScreen : Destination
 }

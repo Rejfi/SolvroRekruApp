@@ -29,6 +29,7 @@ interface CocktailApi {
 
     suspend fun getCocktail(id: Int): Result<CocktailDetails>
     suspend fun searchCocktails(searchValue: String): Result<Cocktails>
+    suspend fun getCocktailsByIds(page: Int, ids: List<Int>): Result<Cocktails>
     // suspend fun getCocktailsGlasses()
     // suspend fun getCocktailsCategories()
 }
@@ -77,6 +78,23 @@ class CocktailNetworkManager : CocktailApi {
 
     override suspend fun searchCocktails(searchValue: String) = runCatching {
         client.get("$baseUrl/cocktails/?name=${searchValue}")
+            .body<Cocktails>()
+    }.onFailure {
+        Log.d("TAG", "${it.message}, ${it.stackTraceToString()}")
+    }
+
+    override suspend fun getCocktailsByIds(page: Int, ids: List<Int>) = runCatching {
+        val request = StringBuilder("$baseUrl/cocktails")
+            .append("?page=$page")
+            .apply {
+                if (ids.isNotEmpty()) {
+                    ids.forEach {
+                        append("&id=$it")
+                    }
+                }
+            }
+            .toString()
+        client.get(request)
             .body<Cocktails>()
     }.onFailure {
         Log.d("TAG", "${it.message}, ${it.stackTraceToString()}")
