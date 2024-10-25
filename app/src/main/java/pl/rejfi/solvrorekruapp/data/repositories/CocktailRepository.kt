@@ -1,18 +1,15 @@
 package pl.rejfi.solvrorekruapp.data.repositories
 
 import android.app.Application
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.stateIn
 import pl.rejfi.solvrorekruapp.data.models.dto.cocktails_list.Cocktail
-import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.CocktailDetailsDomain
+import pl.rejfi.solvrorekruapp.data.models.domain.CocktailDetailsDomain
 import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.CocktailDetailsDto
 import pl.rejfi.solvrorekruapp.data.network.CocktailNetworkManager
 import pl.rejfi.solvrorekruapp.data.network.SearchValue
 
 class CocktailRepository(app: Application) {
-    private val REPO_TAG = "REPO_TAG"
     private val cocktailApi = CocktailNetworkManager()
 
     private val favCocktails = FavouriteCocktailsLocalCache(app.applicationContext)

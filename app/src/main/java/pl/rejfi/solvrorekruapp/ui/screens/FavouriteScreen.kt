@@ -54,11 +54,16 @@ fun FavouriteScreen(
             }
         },
         content = { innerPadding ->
-            CocktailList(
-                modifier = Modifier.padding(innerPadding),
-                cocktails = cocktails,
-                onCocktailClicked = onCocktailClick,
-                onLoadMoreCocktails = onLoadMoreCocktails
-            )
+
+            if (cocktails.isEmpty()) {
+                NothingToShow()
+            } else {
+                CocktailList(
+                    modifier = Modifier.padding(innerPadding),
+                    cocktails = cocktails,
+                    onCocktailClicked = onCocktailClick,
+                    onLoadMoreCocktails = onLoadMoreCocktails
+                )
+            }
         })
 }

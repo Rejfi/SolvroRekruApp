@@ -6,7 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
-import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.CocktailDetailsDomain
+import pl.rejfi.solvrorekruapp.data.models.domain.CocktailDetailsDomain
 
 @Dao
 interface CocktailDao {

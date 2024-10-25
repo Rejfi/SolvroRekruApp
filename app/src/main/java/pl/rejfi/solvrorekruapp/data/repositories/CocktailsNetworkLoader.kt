@@ -49,6 +49,10 @@ class CocktailsNetworkLoader(private val api: CocktailApi) {
                 is SearchValue.Text -> searchValue.text
             }
             val response = api.getAllCocktails(page = page, name = name)
+            if (response.isFailure) {
+                init = false
+                end = false
+            }
             val data = response.getOrNull() ?: return
 
             val meta = data.meta ?: return

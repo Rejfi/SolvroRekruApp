@@ -3,7 +3,7 @@ package pl.rejfi.solvrorekruapp.data.repositories
 import android.content.Context
 import kotlinx.coroutines.flow.Flow
 import pl.rejfi.solvrorekruapp.data.local.CocktailLocalDatabase
-import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.CocktailDetailsDomain
+import pl.rejfi.solvrorekruapp.data.models.domain.CocktailDetailsDomain
 
 class FavouriteCocktailsLocalCache(context: Context) {
     private val localCocktailDatabase = CocktailLocalDatabase.getDatabase(context)

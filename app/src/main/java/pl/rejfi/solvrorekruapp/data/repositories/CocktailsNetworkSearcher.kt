@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import pl.rejfi.solvrorekruapp.data.models.dto.cocktail_categories.CocktailCategory
+import pl.rejfi.solvrorekruapp.data.models.domain.CocktailCategory
 import pl.rejfi.solvrorekruapp.data.models.dto.cocktails_list.Cocktail
 import pl.rejfi.solvrorekruapp.data.network.CocktailApi
 import pl.rejfi.solvrorekruapp.data.network.SearchValue

@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.CocktailDetailsDomain
+import pl.rejfi.solvrorekruapp.data.models.domain.CocktailDetailsDomain
 
 @Database(entities = [CocktailDetailsDomain::class], version = 1)
 @TypeConverters(Converters::class)

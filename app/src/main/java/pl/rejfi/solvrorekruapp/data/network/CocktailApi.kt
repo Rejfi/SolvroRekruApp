@@ -12,8 +12,8 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.get
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import pl.rejfi.solvrorekruapp.data.models.dto.cocktail_categories.CocktailCategory
-import pl.rejfi.solvrorekruapp.data.models.dto.cocktail_sort.SortOrder
+import pl.rejfi.solvrorekruapp.data.models.domain.CocktailCategory
+import pl.rejfi.solvrorekruapp.data.models.domain.SortOrder
 import pl.rejfi.solvrorekruapp.data.models.dto.cocktails_list.Cocktails
 import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.CocktailDetailsDto
 
@@ -109,5 +109,4 @@ class CocktailNetworkManager : CocktailApi {
     }.onFailure {
         Log.d("TAG", "${it.message}, ${it.stackTraceToString()}")
     }
-
 }

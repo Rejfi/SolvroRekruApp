@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -39,8 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import pl.rejfi.solvrorekruapp.R
-import pl.rejfi.solvrorekruapp.data.models.dto.cocktail_categories.CocktailCategory
-import pl.rejfi.solvrorekruapp.data.models.dto.cocktail_sort.SortOrder
+import pl.rejfi.solvrorekruapp.data.models.domain.CocktailCategory
+import pl.rejfi.solvrorekruapp.data.models.domain.SortOrder
 import pl.rejfi.solvrorekruapp.data.models.dto.cocktails_list.Cocktail
 import pl.rejfi.solvrorekruapp.data.network.SearchValue
 import pl.rejfi.solvrorekruapp.viewmodels.MainViewModel
@@ -64,6 +63,7 @@ fun SearchScreenRoot(
     }
 
     SearchScreen(
+        modifier = modifier,
         foundCocktails = cocktails,
         onSearch = { s ->
             query = s

@@ -9,14 +9,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pl.rejfi.solvrorekruapp.data.models.dto.cocktails_list.Cocktail
-import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.CocktailDetailsDomain
-import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.CocktailDetailsDto
+import pl.rejfi.solvrorekruapp.data.models.domain.CocktailDetailsDomain
 import pl.rejfi.solvrorekruapp.data.network.SearchValue
 import pl.rejfi.solvrorekruapp.data.repositories.CocktailRepository
 

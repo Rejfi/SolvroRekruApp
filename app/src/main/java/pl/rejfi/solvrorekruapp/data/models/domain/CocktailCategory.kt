@@ -1,4 +1,4 @@
-package pl.rejfi.solvrorekruapp.data.models.dto.cocktail_categories
+package pl.rejfi.solvrorekruapp.data.models.domain
 
 enum class CocktailCategory(val value: String) {
     COCKTAIL("Cocktail"),

@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
@@ -51,8 +52,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import pl.rejfi.solvrorekruapp.R
-import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.CocktailDetailsDomain
-import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.CocktailDetailsDto
+import pl.rejfi.solvrorekruapp.data.models.domain.CocktailDetailsDomain
 import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.Ingredient
 import pl.rejfi.solvrorekruapp.viewmodels.MainViewModel
 
@@ -112,7 +112,6 @@ fun CocktailDetailsScreen(
     isFavourite: Boolean = false,
     onFavouriteClick: (Boolean, CocktailDetailsDomain) -> Unit
 ) {
-    val scroll = rememberScrollState()
 
     var isCurrentFavourite by remember {
         mutableStateOf(isFavourite)
@@ -142,86 +141,92 @@ fun CocktailDetailsScreen(
             )
         }
     ) { padding ->
-        Column(
+        LazyColumn(
             modifier = modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(MaterialTheme.colorScheme.background)
-                .scrollable(scroll, orientation = Orientation.Vertical)
+                .background(MaterialTheme.colorScheme.background),
+            contentPadding = PaddingValues(vertical = 8.dp)
         ) {
-            AsyncImage(
-                model = cocktail.imageUrl,
-                contentDescription = "Cocktail Image",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(250.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .padding(16.dp),
-                contentScale = ContentScale.Crop,
-                placeholder = painterResource(id = R.drawable.ic_launcher_background)
-            )
+            item {
+                AsyncImage(
+                    model = cocktail.imageUrl,
+                    contentDescription = "Cocktail Image",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(250.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .padding(16.dp),
+                    contentScale = ContentScale.Crop,
+                    placeholder = painterResource(id = R.drawable.ic_launcher_background)
+                )
+            }
 
-            Text(
-                text = cocktail.name,
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-            )
+            item {
+                Text(
+                    text = cocktail.name,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+            }
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-            ) {
-                if (cocktail.alcoholic) {
-                    Icon(
-                        imageVector = Icons.Default.Warning,
-                        contentDescription = "Alcoholic",
-                        tint = Color.Red
-                    )
-                    Text("Alcoholic", modifier = Modifier.padding(start = 8.dp))
-                } else {
-                    Icon(
-                        imageVector = Icons.Default.Face,
-                        contentDescription = "Non-Alcoholic",
-                        tint = Color.Green
-                    )
-                    Text("Non-Alcoholic", modifier = Modifier.padding(start = 8.dp))
+            item {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                ) {
+                    if (cocktail.alcoholic) {
+                        Icon(
+                            imageVector = Icons.Default.Warning,
+                            contentDescription = "Alcoholic",
+                            tint = Color.Red
+                        )
+                        Text("Alcoholic", modifier = Modifier.padding(start = 8.dp))
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.Face,
+                            contentDescription = "Non-Alcoholic",
+                            tint = Color.Green
+                        )
+                        Text("Non-Alcoholic", modifier = Modifier.padding(start = 8.dp))
+                    }
                 }
             }
 
-            Text(
-                text = "Glass: ${cocktail.glass}",
-                style = MaterialTheme.typography.titleSmall,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-            )
+            item {
+                Text(
+                    text = "Glass: ${cocktail.glass}",
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+            }
 
-            Text(
-                text = "Instructions:",
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-            )
-            Text(
-                text = cocktail.instructions,
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
+            item {
+                Text(
+                    text = "Instructions:",
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+                Text(
+                    text = cocktail.instructions,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "Ingredients:",
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+            }
 
-            Text(
-                text = "Ingredients:",
-                style = MaterialTheme.typography.bodySmall,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-            )
-
-            LazyColumn(
-                modifier = Modifier.padding(horizontal = 16.dp),
-                contentPadding = PaddingValues(vertical = 8.dp)
-            ) {
-                items(cocktail.ingredients) { ingredient ->
-                    IngredientItem(ingredient = ingredient)
-                }
+            items(cocktail.ingredients) { ingredient ->
+                IngredientItem(ingredient = ingredient)
             }
         }
     }

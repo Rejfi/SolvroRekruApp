@@ -1,4 +1,4 @@
-package pl.rejfi.solvrorekruapp.data.models.dto.cocktail_sort
+package pl.rejfi.solvrorekruapp.data.models.domain
 
 enum class SortOrder(val value: String) {
     ID_ASC("+id"),
