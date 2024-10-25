@@ -4,9 +4,11 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import pl.rejfi.solvrorekruapp.data.models.dto.cocktails_list.Cocktail
+import androidx.room.TypeConverters
+import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.CocktailDetailsDomain
 
-@Database(entities = [Cocktail::class], version = 1)
+@Database(entities = [CocktailDetailsDomain::class], version = 1)
+@TypeConverters(Converters::class)
 abstract class CocktailLocalDatabase : RoomDatabase() {
     abstract fun dataDao(): CocktailDao
 
@@ -19,7 +21,7 @@ abstract class CocktailLocalDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     CocktailLocalDatabase::class.java,
-                    "cocktail_database"
+                    "fav_cocktails_database"
                 ).build()
                 INSTANCE = instance
                 instance

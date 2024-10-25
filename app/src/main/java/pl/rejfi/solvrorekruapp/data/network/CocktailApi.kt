@@ -12,32 +12,31 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.request.get
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
+import pl.rejfi.solvrorekruapp.data.models.dto.cocktail_categories.CocktailCategory
+import pl.rejfi.solvrorekruapp.data.models.dto.cocktail_sort.SortOrder
 import pl.rejfi.solvrorekruapp.data.models.dto.cocktails_list.Cocktails
-import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.CocktailDetails
-import pl.rejfi.solvrorekruapp.ui.screens.Destination
+import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.CocktailDetailsDto
 
 sealed interface SearchValue {
     data object None : SearchValue
-    data class Text(val text: String) : SearchValue
+    data class Text(
+        val text: String,
+        val category: CocktailCategory,
+        val sort: SortOrder
+    ) : SearchValue
 }
 
 interface CocktailApi {
     suspend fun getAllCocktails(
         page: Int = 1,
-        name: String? = null
+        name: String? = null,
+        category: CocktailCategory? = null,
+        sort: SortOrder? = null
     ): Result<Cocktails>
 
-    suspend fun getCocktail(id: Int): Result<CocktailDetails>
+    suspend fun getCocktail(id: Int): Result<CocktailDetailsDto>
     suspend fun searchCocktails(searchValue: String): Result<Cocktails>
     suspend fun getCocktailsByIds(page: Int, ids: List<Int>): Result<Cocktails>
-    // suspend fun getCocktailsGlasses()
-    // suspend fun getCocktailsCategories()
-}
-
-interface IngredientsApi {
-    fun getAllIngredients()
-    fun getIngredients(id: Int)
-    fun getIngredientsTypes()
 }
 
 class CocktailNetworkManager : CocktailApi {
@@ -56,11 +55,22 @@ class CocktailNetworkManager : CocktailApi {
         }
     }
 
-    override suspend fun getAllCocktails(page: Int, name: String?) = runCatching {
+    override suspend fun getAllCocktails(
+        page: Int,
+        name: String?,
+        category: CocktailCategory?,
+        sort: SortOrder?
+    ) = runCatching {
         val request = StringBuilder("$baseUrl/cocktails")
             .append("?page=$page")
             .apply {
                 if (name != null) append("&name=$name")
+            }
+            .apply {
+                if (category != null) append("&category=${category.value}")
+            }
+            .apply {
+                if (sort != null) append("&sort=${sort.value}")
             }
             .toString()
         client.get(request)
@@ -71,7 +81,7 @@ class CocktailNetworkManager : CocktailApi {
 
     override suspend fun getCocktail(id: Int) = runCatching {
         client.get("$baseUrl/cocktails/${id}")
-            .body<CocktailDetails>()
+            .body<CocktailDetailsDto>()
     }.onFailure {
         Log.d("TAG", "${it.message}, ${it.stackTraceToString()}")
     }

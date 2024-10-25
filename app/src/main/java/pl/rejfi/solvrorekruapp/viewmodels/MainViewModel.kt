@@ -9,15 +9,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import pl.rejfi.solvrorekruapp.data.models.dto.cocktails_list.Cocktail
-import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.CocktailDetails
+import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.CocktailDetailsDomain
+import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.CocktailDetailsDto
 import pl.rejfi.solvrorekruapp.data.network.SearchValue
 import pl.rejfi.solvrorekruapp.data.repositories.CocktailRepository
 
@@ -47,8 +46,11 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             initialValue = emptyList()
         )
 
-    fun loadNextSearchCocktails(searchValue: SearchValue) = viewModelScope.launch(Dispatchers.IO) {
-        repo.loadNextSearchCocktails(searchValue)
+    fun loadNextSearchCocktails(
+        searchValue: SearchValue,
+        newSearch: Boolean = false
+    ) = viewModelScope.launch(Dispatchers.IO) {
+        repo.loadNextSearchCocktails(searchValue, newSearch)
     }
 
     fun clearFoundCocktails() {
@@ -62,15 +64,12 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             initialValue = emptyList()
         )
 
-    fun loadNextFavouriteCocktails() = viewModelScope.launch(Dispatchers.IO) {
-        repo.loadNextFavouriteCocktails()
-    }
+    fun saveFavouriteCocktail(cocktailDetailsDomain: CocktailDetailsDomain) =
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.saveFavouriteCocktails(cocktailDetailsDomain)
+        }
 
-    fun saveFavouriteCocktail(id: Int) = viewModelScope.launch(Dispatchers.IO) {
-        repo.saveFavouriteCocktails(id)
-    }
-
-    private val _selectedCocktail = MutableStateFlow<CocktailDetails?>(null)
+    private val _selectedCocktail = MutableStateFlow<CocktailDetailsDomain?>(null)
     val selectedCocktail = _selectedCocktail.asStateFlow()
 
     fun selectCocktail(id: Int?) = viewModelScope.launch(Dispatchers.IO) {
@@ -79,24 +78,28 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             return@launch
         }
 
+        val cachedFavCocktail = repo.getFavouriteCocktailById(id).firstOrNull()
+        if (cachedFavCocktail != null) {
+            _selectedCocktail.update { cachedFavCocktail.copy(favourite = true) }
+            Log.d("TAG", "Restore from cache")
+            return@launch
+        }
+
         val response = repo.getCocktailById(id)
 
         if (response.isFailure) return@launch
-        val selectedCocktail = response.getOrNull() ?: return@launch
+        val selectedCocktailDto = response.getOrNull() ?: return@launch
+        val selectedCocktailDomain = selectedCocktailDto.toDomain()
 
-        Log.d("TAG", "List: ${selectedCocktail.toString()}")
-        val localFavouriteCocktails: List<Int> = repo.getFavouriteIds().first()
-
-        Log.d("TAG", "List: ${localFavouriteCocktails.toString()}")
-
-        val isFavourite = localFavouriteCocktails.contains(selectedCocktail.details.id)
-        val cocktail = selectedCocktail.copy(
-            favourite = isFavourite
+        val isFavourite = repo.isCocktailFavourite(selectedCocktailDomain)
+        val cocktail = selectedCocktailDomain.copy(
+            favourite = isFavourite == 1
         )
         _selectedCocktail.update { cocktail }
     }
 
-    fun removeFavouriteCocktailId(id: Int) = viewModelScope.launch(Dispatchers.IO) {
-        repo.removeFavouriteCocktailId(id)
-    }
+    fun removeFavouriteCocktailId(cocktailDetailsDomain: CocktailDetailsDomain) =
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.removeFavouriteCocktail(cocktailDetailsDomain)
+        }
 }

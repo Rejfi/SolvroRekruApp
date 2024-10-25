@@ -1,12 +1,13 @@
 package pl.rejfi.solvrorekruapp.data.repositories
 
 import android.app.Application
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import pl.rejfi.solvrorekruapp.data.local.CocktailLocalDatabase
+import kotlinx.coroutines.flow.stateIn
 import pl.rejfi.solvrorekruapp.data.models.dto.cocktails_list.Cocktail
-import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.CocktailDetails
+import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.CocktailDetailsDomain
+import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.CocktailDetailsDto
 import pl.rejfi.solvrorekruapp.data.network.CocktailNetworkManager
 import pl.rejfi.solvrorekruapp.data.network.SearchValue
 
@@ -14,13 +15,9 @@ class CocktailRepository(app: Application) {
     private val REPO_TAG = "REPO_TAG"
     private val cocktailApi = CocktailNetworkManager()
 
-    private val localCocktailDatabase = CocktailLocalDatabase.getDatabase(app)
-    private val cocktailDao = localCocktailDatabase.dataDao()
-
-    private val cocktailsDatastore = FavouriteCocktailsLocalDatastore(app.applicationContext)
+    private val favCocktails = FavouriteCocktailsLocalCache(app.applicationContext)
     private val cocktailNetworkLoader = CocktailsNetworkLoader(cocktailApi)
     private val cocktailNetworkSearcher = CocktailsNetworkSearcher(cocktailApi)
-    private val favouriteCocktailManager = FavouriteCocktailManager(cocktailApi, cocktailsDatastore)
 
     fun getCocktails(): StateFlow<List<Cocktail>> {
         return cocktailNetworkLoader.cocktails
@@ -34,8 +31,8 @@ class CocktailRepository(app: Application) {
         cocktailNetworkSearcher.clearResult()
     }
 
-    suspend fun loadNextSearchCocktails(searchValue: SearchValue) {
-        cocktailNetworkSearcher.loadNext(searchValue)
+    suspend fun loadNextSearchCocktails(searchValue: SearchValue, newSearch: Boolean = false) {
+        cocktailNetworkSearcher.loadNext(searchValue, newSearch)
     }
 
     suspend fun loadNextCocktails(searchValue: SearchValue) {
@@ -46,27 +43,28 @@ class CocktailRepository(app: Application) {
         cocktailNetworkLoader.loadCocktailsFirstPage()
     }
 
-    fun getFavouriteCocktails(): StateFlow<List<Cocktail>> {
-        return favouriteCocktailManager.cocktails
+    fun getFavouriteCocktails(): Flow<List<CocktailDetailsDomain>> {
+        return favCocktails.getFavouriteCocktails()
     }
 
-    suspend fun loadNextFavouriteCocktails() {
-        favouriteCocktailManager.loadNext()
+    fun getFavouriteCocktailById(id: Int): Flow<CocktailDetailsDomain> {
+        return favCocktails.getFavouriteCocktail(id)
     }
 
-    suspend fun saveFavouriteCocktails(id: Int) {
-        cocktailsDatastore.saveFavouriteCocktailId(id)
+    suspend fun saveFavouriteCocktails(cocktailDetailsDomain: CocktailDetailsDomain) {
+        favCocktails.saveFavouriteCocktail(cocktailDetailsDomain)
     }
 
-    fun getFavouriteIds(): Flow<List<Int>> {
-        return cocktailsDatastore.getFavouriteCocktailIds()
+    suspend fun removeFavouriteCocktail(cocktailDetailsDomain: CocktailDetailsDomain) {
+        favCocktails.deleteFavouriteCocktail(cocktailDetailsDomain)
     }
 
-    suspend fun getCocktailById(id: Int): Result<CocktailDetails> {
+    suspend fun isCocktailFavourite(cocktailDetailsDomain: CocktailDetailsDomain): Int {
+        return favCocktails.isCocktailFavourite(cocktailDetailsDomain.id)
+    }
+
+    suspend fun getCocktailById(id: Int): Result<CocktailDetailsDto> {
         return cocktailApi.getCocktail(id)
     }
 
-    suspend fun removeFavouriteCocktailId(id: Int) {
-        cocktailsDatastore.removeFavouriteCocktailId(id)
-    }
 }

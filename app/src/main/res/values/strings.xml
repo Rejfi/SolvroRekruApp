@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">SolvroRekruApp</string>
+    <string name="nav_home_menu_button">Home</string>
+    <string name="nav_search_menu_button">Search</string>
+    <string name="nav_favourite_menu_button">Favourites</string>
+    <string name="favourite_screen_top_welcome_text">Your favourite drinks</string>
+    <string name="main_screen_top_welcome_text">All drinks</string>
+    <string name="search_screen_top_welcome_text">Search drinks</string>
 </resources>

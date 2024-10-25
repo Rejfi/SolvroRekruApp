@@ -25,7 +25,6 @@ import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -38,11 +37,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,7 +51,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import pl.rejfi.solvrorekruapp.R
-import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.CocktailDetails
+import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.CocktailDetailsDomain
+import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.CocktailDetailsDto
 import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.Ingredient
 import pl.rejfi.solvrorekruapp.viewmodels.MainViewModel
 
@@ -63,7 +61,7 @@ fun DetailScreenRoot(
     viewModel: MainViewModel,
     cocktailId: Int,
     modifier: Modifier = Modifier,
-    onFavouriteClick: (Boolean, Int) -> Unit = { _, _ -> }
+    onFavouriteClick: (Boolean, CocktailDetailsDomain) -> Unit = { _, _ -> }
 ) {
     LaunchedEffect(Unit) {
         viewModel.selectCocktail(cocktailId)
@@ -89,9 +87,9 @@ fun DetailScreenRoot(
 
 @Composable
 fun DetailScreen(
-    cocktail: CocktailDetails,
+    cocktail: CocktailDetailsDomain,
     modifier: Modifier = Modifier,
-    onFavouriteClick: (Boolean, Int) -> Unit = { _, _ -> }
+    onFavouriteClick: (Boolean, CocktailDetailsDomain) -> Unit = { _, _ -> }
 ) {
     Scaffold(
         modifier = modifier
@@ -109,10 +107,10 @@ fun DetailScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CocktailDetailsScreen(
-    cocktail: CocktailDetails,
+    cocktail: CocktailDetailsDomain,
     modifier: Modifier = Modifier,
     isFavourite: Boolean = false,
-    onFavouriteClick: (Boolean, Int) -> Unit
+    onFavouriteClick: (Boolean, CocktailDetailsDomain) -> Unit
 ) {
     val scroll = rememberScrollState()
 
@@ -128,11 +126,11 @@ fun CocktailDetailsScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(cocktail.details.name)
+                        Text(cocktail.name)
                         IconButton(
                             onClick = {
                                 isCurrentFavourite = !isCurrentFavourite
-                                onFavouriteClick(isCurrentFavourite, cocktail.details.id)
+                                onFavouriteClick(isCurrentFavourite, cocktail)
                             }) {
                             val icon =
                                 if (isCurrentFavourite) Icons.Default.Favorite
@@ -145,14 +143,14 @@ fun CocktailDetailsScreen(
         }
     ) { padding ->
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(padding)
                 .background(MaterialTheme.colorScheme.background)
                 .scrollable(scroll, orientation = Orientation.Vertical)
         ) {
             AsyncImage(
-                model = cocktail.details.imageUrl,
+                model = cocktail.imageUrl,
                 contentDescription = "Cocktail Image",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -164,7 +162,7 @@ fun CocktailDetailsScreen(
             )
 
             Text(
-                text = cocktail.details.name,
+                text = cocktail.name,
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
@@ -175,7 +173,7 @@ fun CocktailDetailsScreen(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
             ) {
-                if (cocktail.details.alcoholic) {
+                if (cocktail.alcoholic) {
                     Icon(
                         imageVector = Icons.Default.Warning,
                         contentDescription = "Alcoholic",
@@ -193,7 +191,7 @@ fun CocktailDetailsScreen(
             }
 
             Text(
-                text = "Glass: ${cocktail.details.glass}",
+                text = "Glass: ${cocktail.glass}",
                 style = MaterialTheme.typography.titleSmall,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
@@ -204,7 +202,7 @@ fun CocktailDetailsScreen(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
             Text(
-                text = cocktail.details.instructions,
+                text = cocktail.instructions,
                 style = MaterialTheme.typography.bodySmall,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
@@ -221,7 +219,7 @@ fun CocktailDetailsScreen(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 contentPadding = PaddingValues(vertical = 8.dp)
             ) {
-                items(cocktail.details.ingredients) { ingredient ->
+                items(cocktail.ingredients) { ingredient ->
                     IngredientItem(ingredient = ingredient)
                 }
             }
@@ -255,7 +253,7 @@ fun IngredientItem(ingredient: Ingredient) {
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold
             )
-            ingredient.measure?.let {
+            ingredient.measure.let {
                 Text(text = "Measure: $it", style = MaterialTheme.typography.bodySmall)
             }
         }

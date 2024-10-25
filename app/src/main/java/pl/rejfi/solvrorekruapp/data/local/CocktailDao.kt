@@ -6,23 +6,26 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
-import pl.rejfi.solvrorekruapp.data.models.dto.cocktails_list.Cocktail
+import pl.rejfi.solvrorekruapp.data.models.dto.single_cocktail.CocktailDetailsDomain
 
 @Dao
 interface CocktailDao {
 
-    @Query("SELECT * FROM cocktails_table WHERE id = :id")
-    fun getCocktailDetails(id: Int): Flow<Cocktail>
+    @Query("SELECT * FROM fav_cocktails WHERE id = :id")
+    fun getCocktailById(id: Int): Flow<CocktailDetailsDomain>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertCocktail(cocktailList: List<Cocktail>)
+    suspend fun insertCocktail(cocktailList: List<CocktailDetailsDomain>)
 
     @Delete
-    suspend fun deleteCocktail(cocktailList: List<Cocktail>)
+    suspend fun deleteCocktail(cocktailList: List<CocktailDetailsDomain>)
 
-    @Query("SELECT * FROM cocktails_table")
-    fun getAllCocktails(): Flow<List<Cocktail>>
+    @Query("SELECT * FROM fav_cocktails")
+    fun getAllCocktails(): Flow<List<CocktailDetailsDomain>>
 
-    @Query("SELECT * FROM cocktails_table WHERE name MATCH :contains")
-    fun searchCocktails(contains: String): Flow<List<Cocktail>>
+    @Query("SELECT * FROM fav_cocktails WHERE name MATCH :contains")
+    fun searchCocktails(contains: String): Flow<List<CocktailDetailsDomain>>
+
+    @Query("SELECT EXISTS(SELECT 1 FROM fav_cocktails WHERE id = :id)")
+    suspend fun containsCocktailById(id: Int): Int
 }
