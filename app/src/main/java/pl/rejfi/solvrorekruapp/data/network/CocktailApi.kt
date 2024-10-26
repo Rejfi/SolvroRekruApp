@@ -60,7 +60,7 @@ class CocktailNetworkManager : CocktailApi {
         name: String?,
         category: CocktailCategory?,
         sort: SortOrder?
-    ) = runCatching {
+    ) = executeCatching {
         val request = StringBuilder("$baseUrl/cocktails")
             .append("?page=$page")
             .apply {
@@ -75,25 +75,19 @@ class CocktailNetworkManager : CocktailApi {
             .toString()
         client.get(request)
             .body<Cocktails>()
-    }.onFailure {
-        Log.d("TAG", "${it.message}, ${it.stackTraceToString()}")
     }
 
-    override suspend fun getCocktail(id: Int) = runCatching {
+    override suspend fun getCocktail(id: Int) = executeCatching {
         client.get("$baseUrl/cocktails/${id}")
             .body<CocktailDetailsDto>()
-    }.onFailure {
-        Log.d("TAG", "${it.message}, ${it.stackTraceToString()}")
     }
 
-    override suspend fun searchCocktails(searchValue: String) = runCatching {
+    override suspend fun searchCocktails(searchValue: String) = executeCatching {
         client.get("$baseUrl/cocktails/?name=${searchValue}")
             .body<Cocktails>()
-    }.onFailure {
-        Log.d("TAG", "${it.message}, ${it.stackTraceToString()}")
     }
 
-    override suspend fun getCocktailsByIds(page: Int, ids: List<Int>) = runCatching {
+    override suspend fun getCocktailsByIds(page: Int, ids: List<Int>) = executeCatching {
         val request = StringBuilder("$baseUrl/cocktails")
             .append("?page=$page")
             .apply {
@@ -106,7 +100,11 @@ class CocktailNetworkManager : CocktailApi {
             .toString()
         client.get(request)
             .body<Cocktails>()
-    }.onFailure {
-        Log.d("TAG", "${it.message}, ${it.stackTraceToString()}")
+    }
+
+    private suspend fun <T> executeCatching(block: suspend () -> T): Result<T> {
+        return runCatching { block() }
+            .onFailure { Log.d("TAG", "${it.message}, ${it.stackTraceToString()}") }
+            .onSuccess { Log.d("TAG", "Success hash code: ${it.hashCode()}") }
     }
 }
