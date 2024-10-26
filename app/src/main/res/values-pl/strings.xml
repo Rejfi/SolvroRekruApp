@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SolvroRekruApp</string>
+    <string name="nav_home_menu_button">Start</string>
+    <string name="nav_search_menu_button">Szukaj</string>
+    <string name="nav_favourite_menu_button">Ulubione</string>
+    <string name="favourite_screen_top_welcome_text">Twoje ulubione drinki</string>
+    <string name="main_screen_top_welcome_text">Wszystkie drinki</string>
+    <string name="search_screen_top_welcome_text">Szukaj drinków</string>
+    <string name="are_you_teetotaller_nothing_to_show">Jesteś abstynentem? Pustka :(</string>
+    <string name="click_to_refresh">Kliknij aby odświeżyć</string>
+</resources>
