@@ -51,8 +51,9 @@ fun MainApp(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                     icon = Icons.Default.Home,
                     contentDescription = stringResource(R.string.nav_home_menu_button),
                     onClick = {
-                        if (navController.currentDestination?.route != Destination.MainScreen.javaClass.canonicalName) {
-                            navController.navigate(Destination.MainScreen)
+                        navController.navigate(Destination.MainScreen) {
+                            popUpTo(Destination.MainScreen) { inclusive = true }
+                            launchSingleTop = true
                         }
                     }
                 )
@@ -61,8 +62,9 @@ fun MainApp(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                     icon = Icons.Default.Search,
                     contentDescription = stringResource(R.string.nav_search_menu_button),
                     onClick = {
-                        if (navController.currentDestination?.route != Destination.SearchScreen.javaClass.canonicalName) {
-                            navController.navigate(Destination.SearchScreen)
+                        navController.navigate(Destination.SearchScreen) {
+                            popUpTo(Destination.MainScreen) { inclusive = false }
+                            launchSingleTop = true
                         }
                     }
                 )
@@ -70,8 +72,9 @@ fun MainApp(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                     icon = Icons.Default.Favorite,
                     contentDescription = stringResource(R.string.nav_favourite_menu_button),
                     onClick = {
-                        if (navController.currentDestination?.route != Destination.FavouriteScreen.javaClass.canonicalName) {
-                            navController.navigate(Destination.FavouriteScreen)
+                        navController.navigate(Destination.FavouriteScreen) {
+                            popUpTo(Destination.FavouriteScreen) { inclusive = false }
+                            launchSingleTop = true
                         }
                     }
                 )
