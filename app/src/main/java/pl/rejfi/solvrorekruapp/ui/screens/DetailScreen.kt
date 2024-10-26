@@ -257,9 +257,7 @@ fun IngredientItem(ingredient: Ingredient) {
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold
             )
-            ingredient.measure.let {
-                Text(text = "Measure: $it", style = MaterialTheme.typography.bodySmall)
-            }
+            Text(text = "Measure: ${ingredient.measure}", style = MaterialTheme.typography.bodySmall)
         }
     }
 }
