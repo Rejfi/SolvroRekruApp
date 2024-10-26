@@ -66,7 +66,10 @@ fun DetailScreenRoot(
     val selectedCocktail by viewModel.selectedCocktail.collectAsState()
 
     if (selectedCocktail == null) {
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
             CircularProgressIndicator()
         }
     } else {

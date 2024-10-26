@@ -67,6 +67,11 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
             repo.saveFavouriteCocktails(cocktailDetailsDomain)
         }
 
+    fun removeFavouriteCocktailId(cocktailDetailsDomain: CocktailDetailsDomain) =
+        viewModelScope.launch(Dispatchers.IO) {
+            repo.removeFavouriteCocktail(cocktailDetailsDomain)
+        }
+
     private val _selectedCocktail = MutableStateFlow<CocktailDetailsDomain?>(null)
     val selectedCocktail = _selectedCocktail.asStateFlow()
 
@@ -95,9 +100,4 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         )
         _selectedCocktail.update { cocktail }
     }
-
-    fun removeFavouriteCocktailId(cocktailDetailsDomain: CocktailDetailsDomain) =
-        viewModelScope.launch(Dispatchers.IO) {
-            repo.removeFavouriteCocktail(cocktailDetailsDomain)
-        }
 }
