@@ -6,4 +6,6 @@
     <string name="favourite_screen_top_welcome_text">Your favourite drinks</string>
     <string name="main_screen_top_welcome_text">All drinks</string>
     <string name="search_screen_top_welcome_text">Search drinks</string>
+    <string name="are_you_teetotaller_nothing_to_show">Are you teetotaller? Nothing to show :(</string>
+    <string name="click_to_refresh">Click to refresh</string>
 </resources>

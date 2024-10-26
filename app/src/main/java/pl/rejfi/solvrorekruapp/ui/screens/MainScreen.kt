@@ -142,8 +142,8 @@ fun NothingToShow(
             modifier = Modifier.clickable { onClick() },
             painter = painterResource(id = R.drawable.broken_glass), contentDescription = ""
         )
-        Text("Are you teetotaller? Nothing to show :(")
-        Text("Click to refresh")
+        Text(stringResource(R.string.are_you_teetotaller_nothing_to_show))
+        Text(stringResource(R.string.click_to_refresh))
     }
 }
 

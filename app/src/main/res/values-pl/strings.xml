@@ -7,4 +7,6 @@
     <string name="favourite_screen_top_welcome_text">Twoje ulubione drinki</string>
     <string name="main_screen_top_welcome_text">Wszystkie drinki</string>
     <string name="search_screen_top_welcome_text">Szukaj drinków</string>
+    <string name="are_you_teetotaller_nothing_to_show">Jesteś abstynentem? Pustka :(</string>
+    <string name="click_to_refresh">Kliknij aby odświeżyć</string>
 </resources>
